@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Attendance System</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Student Attendance
+            </h1>
+
+            <p>
+                Management System
+            </p>
+
+        </div>
+
+        <button
+            id="darkModeBtn"
+            class="dark-btn"
+            onclick="toggleDarkMode()"
+        >
+            🌙
+        </button>
+
+    </div>
+
+
+    <!-- ATTENDANCE STATUS -->
+
+    <div
+        id="attendanceStatus"
+        class="status"
+    >
+        Checking attendance time...
+    </div>
+
+
+    <!-- DATE -->
+
+    <div class="date-card">
+
+        <div>
+
+            <span class="small-title">
+                Attendance Date
+            </span>
+
+            <strong id="todayText">
+                Today
+            </strong>
+
+        </div>
+
+
+        <input
+            type="date"
+            id="attendanceDate"
+        >
+
+    </div>
+
+
+    <!-- ADD STUDENT -->
+
+    <div class="section-card">
+
+        <h2>
+            Add Student
+        </h2>
+
+
+        <div class="form">
+
+            <input
+                type="text"
+                id="studentRoll"
+                placeholder="Roll Number"
+            >
+
+
+            <input
+                type="text"
+                id="studentName"
+                placeholder="Student Name"
+            >
+
+
+            <button
+                class="add-btn"
+                onclick="addStudent()"
+            >
+                + Add Student
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <div class="dashboard">
+
+
+        <div class="dashboard-card">
+
+            <span>
+                👨‍🎓
+            </span>
+
+            <p>
+                Total Students
+            </p>
+
+            <h2 id="totalStudents">
+                0
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                ✅
+            </span>
+
+            <p>
+                Present
+            </p>
+
+            <h2 id="totalPresent">
+                0
+            </h2>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <span>
+                ❌
+            </span>
+
+            <p>
+                Absent
+            </p>
+
+            <h2 id="totalAbsent">
+                0
+            </h2>
+
+        </div>
+
+    </div>
+<div class="dashboard-card">
+
+    <span>
+        📊
+    </span>
+
+    <p>
+        Class Average
+    </p>
+
+    <h2 id="classAverage">
+        0%
+    </h2>
+
+</div>
+
+    <!-- SEARCH -->
+
+    <div class="section-card">
+
+        <div class="list-heading">
+
+            <div>
+
+                <h2>
+                    Students
+                </h2>
+
+                <span
+                    id="studentCount"
+                >
+                    0 Students
+                </span>
+
+            </div>
+
+
+            <input
+                type="text"
+                id="searchStudent"
+                placeholder="🔍 Search..."
+                oninput="searchStudent()"
+            >
+
+        </div>
+
+
+        <div id="studentList">
+
+            <div class="empty">
+
+                <div>
+                    👨‍🎓
+                </div>
+
+                <p>
+                    No students added yet
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT -->
+
+    <div
+        id="reportSection"
+        class="report-overlay hidden"
+    >
+
+        <div class="report-box">
+
+            <div class="report-header">
+
+                <h2>
+                    📊 Attendance Report
+                </h2>
+
+
+                <button
+                    onclick="closeReport()"
+                    class="close-btn"
+                >
+                    ✕
+                </button>
+
+            </div>
+
+
+            <div id="reportContent">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script
+    src="script.js"
+></script>
+
+
+</body>
+
+</html>
