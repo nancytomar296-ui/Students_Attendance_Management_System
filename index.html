@@ -1,227 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Student Attendance System</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Management System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
 <div class="container">
 
+    <header>
+        <h1>Student Attendance</h1>
+        <p>Student Attendance Management System</p>
 
-    <!-- HEADER -->
-
-    <div class="header">
-
-        <div>
-
-            <h1>
-                Student Attendance
-            </h1>
-
-            <p>
-                Management System
-            </p>
-
+        <div class="date-box">
+            📅 <span id="currentDate"></span>
         </div>
 
-        <button
-            id="darkModeBtn"
-            class="dark-btn"
-            onclick="toggleDarkMode()"
-        >
-            🌙
-        </button>
-
-    </div>
-
-
-    <!-- ATTENDANCE STATUS -->
-
-    <div
-        id="attendanceStatus"
-        class="status"
-    >
-        Checking attendance time...
-    </div>
-
-
-    <!-- DATE -->
-
-    <div class="date-card">
-
-        <div>
-
-            <span class="small-title">
-                Attendance Date
-            </span>
-
-            <strong id="todayText">
-                Today
-            </strong>
-
-        </div>
-
-
-        <input
-            type="date"
-            id="attendanceDate"
-        >
-
-    </div>
+        <div id="lockMessage"></div>
+    </header>
 
 
     <!-- ADD STUDENT -->
 
-    <div class="section-card">
+    <section class="card">
 
-        <h2>
-            Add Student
-        </h2>
+        <h2>➕ Add Student</h2>
 
-
-        <div class="form">
-
-            <input
-                type="text"
-                id="studentRoll"
-                placeholder="Roll Number"
-            >
-
+        <div class="form-row">
 
             <input
                 type="text"
                 id="studentName"
-                placeholder="Student Name"
+                placeholder="Enter student name"
             >
 
+            <input
+                type="text"
+                id="rollNumber"
+                placeholder="Enter roll number"
+            >
 
             <button
                 class="add-btn"
                 onclick="addStudent()"
             >
-                + Add Student
+                Add Student
             </button>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- DASHBOARD -->
+    <!-- ATTENDANCE -->
 
-    <div class="dashboard">
+    <section class="card">
 
-
-        <div class="dashboard-card">
-
-            <span>
-                👨‍🎓
-            </span>
-
-            <p>
-                Total Students
-            </p>
-
-            <h2 id="totalStudents">
-                0
-            </h2>
-
-        </div>
-
-
-        <div class="dashboard-card">
-
-            <span>
-                ✅
-            </span>
-
-            <p>
-                Present
-            </p>
-
-            <h2 id="totalPresent">
-                0
-            </h2>
-
-        </div>
-
-
-        <div class="dashboard-card">
-
-            <span>
-                ❌
-            </span>
-
-            <p>
-                Absent
-            </p>
-
-            <h2 id="totalAbsent">
-                0
-            </h2>
-
-        </div>
-
-    </div>
-<div class="dashboard-card">
-
-    <span>
-        📊
-    </span>
-
-    <p>
-        Class Average
-    </p>
-
-    <h2 id="classAverage">
-        0%
-    </h2>
-
-</div>
-
-    <!-- SEARCH -->
-
-    <div class="section-card">
-
-        <div class="list-heading">
+        <div class="attendance-header">
 
             <div>
-
-                <h2>
-                    Students
-                </h2>
-
-                <span
-                    id="studentCount"
-                >
-                    0 Students
-                </span>
-
+                <h2>📝 Mark Attendance</h2>
+                <p>Select subject, then mark attendance.</p>
             </div>
 
+            <select id="subjectSelect">
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                <option value="C Programming">
+                    C Programming
+                </option>
+
+                <option value="Python">
+                    Python
+                </option>
+
+                <option value="HTML & CSS">
+                    HTML & CSS
+                </option>
+
+                <option value="JavaScript">
+                    JavaScript
+                </option>
+
+                <option value="DBMS">
+                    DBMS
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="search-box">
 
             <input
                 type="text"
                 id="searchStudent"
-                placeholder="🔍 Search..."
-                oninput="searchStudent()"
+                placeholder="🔍 Search student..."
+                oninput="displayStudents()"
             >
 
         </div>
@@ -230,65 +112,42 @@
         <div id="studentList">
 
             <div class="empty">
-
-                <div>
-                    👨‍🎓
-                </div>
-
-                <p>
-                    No students added yet
-                </p>
-
+                No students added yet.
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- REPORT -->
+    <!-- DASHBOARD -->
 
-    <div
-        id="reportSection"
-        class="report-overlay hidden"
-    >
+    <section class="dashboard">
 
-        <div class="report-box">
-
-            <div class="report-header">
-
-                <h2>
-                    📊 Attendance Report
-                </h2>
-
-
-                <button
-                    onclick="closeReport()"
-                    class="close-btn"
-                >
-                    ✕
-                </button>
-
-            </div>
-
-
-            <div id="reportContent">
-
-            </div>
-
+        <div class="dashboard-card">
+            <span>👨‍🎓</span>
+            <h3>Total Students</h3>
+            <strong id="totalStudents">0</strong>
         </div>
 
-    </div>
+        <div class="dashboard-card">
+            <span>📚</span>
+            <h3>Total Attendance Records</h3>
+            <strong id="totalClasses">0</strong>
+        </div>
 
+        <div class="dashboard-card">
+            <span>📊</span>
+            <h3>Overall Attendance</h3>
+            <strong id="overallAttendance">0%</strong>
+        </div>
+
+    </section>
 
 </div>
 
 
-<script
-    src="script.js"
-></script>
-
+<script src="script.js"></script>
 
 </body>
-
-</html>
+    </html>
