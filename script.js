@@ -1,3 +1,28 @@
+
+let defaultStudents = [
+    { id: "STU001", name: "Rahul Sharma", subject: "Web Development", status: "Present" },
+    { id: "STU002", name: "Amit Verma", subject: "Java Programming", status: "Absent" },
+    { id: "STU003", name: "Priya Rai", subject: "Data Structures", status: "Present" },
+    { id: "STU004", name: "Neha Tomar", subject: "Web Development", status: "Present" }
+];
+
+let students = JSON.parse(localStorage.getItem('studentAttendanceData')) || defaultStudents;
+
+if (!localStorage.getItem('studentAttendanceData')) {
+    localStorage.setItem('studentAttendanceData', JSON.stringify(students));
+}
+
+displayDate();
+updateLockMessage();
+displayStudents(); 
+updateDashboard();
+
+// Check every minute
+setInterval(function() {
+    updateLockMessage();
+    displayStudents();
+}, 60000);
+
 let students =
     JSON.parse(localStorage.getItem("students")) || [];
 
@@ -774,18 +799,4 @@ setInterval(function() {
     displayStudents();
 
 }, 60000);
-
-let students = [
-    { id: "STU001", name: "Rahul Sharma", subject: "Web Development", status: "Present" },
-    { id: "STU002", name: "Amit Verma", subject: "Java Programming", status: "Absent" },
-    { id: "STU003", name: "Priya Rai", subject: "Data Structures", status: "Present" },
-    { id: "STU004", name: "Neha Tomar", subject: "Web Development", status: "Present" }
-];
-
-
-function updateDashboardStats() {
-    document.querySelector('.total-students-count').innerText = students.length;
-    document.querySelector('.total-records-count').innerText = "4"; // या जितने रिकॉर्ड्स हों
-    document.querySelector('.overall-attendance-percentage').innerText = "75%"; // (3/4 * 100)
-}
 
