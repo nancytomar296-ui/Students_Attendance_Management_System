@@ -1,15 +1,23 @@
 // =====================================================
 // DATA & STATE INITIALIZATION 
 // ===================================================
+
 const defaultStudents = [
     { id: 1001, name: "Rahul Sharma", roll: "BCA-001" },
     { id: 1002, name: "Amit Verma", roll: "BCA-002" },
     { id: 1003, name: "Priya Rai", roll: "BCA-003" },
     { id: 1004, name: "Neha Tomar", roll: "BCA-004" }
 ];
-let students = JSON.parse(localStorage.getItem("students")) || defaultStudents;
-let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
+let students = JSON.parse(localStorage.getItem("students"));
+
+if (!students || students.length === 0) {
+    students = defaultStudents; 
+    localStorage.setItem("students", JSON.stringify(students)); // मेमोरी में सेव करें
+}
+
+let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+    
 if (!localStorage.getItem("students")) {
     localStorage.setItem("students", JSON.stringify(students));
 }
