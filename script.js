@@ -1,7 +1,8 @@
 // =====================================================
-// DATA & STATE INITIALIZATION 
-// ===================================================
+// 1. DATA & STATE INITIALIZATION (सबसे ऊपर)
+// =====================================================
 
+// मॉक डेटा का सही स्ट्रक्चर (ताकि App के roll और id फ़ील्ड्स मैच करें)
 const defaultStudents = [
     { id: 1001, name: "Rahul Sharma", roll: "BCA-001" },
     { id: 1002, name: "Amit Verma", roll: "BCA-002" },
@@ -9,21 +10,19 @@ const defaultStudents = [
     { id: 1004, name: "Neha Tomar", roll: "BCA-004" }
 ];
 
+// लोकल स्टोरेज से डेटा निकालें
 let students = JSON.parse(localStorage.getItem("students"));
 
+// बुलेटप्रूफ फिक्स: अगर लोकल स्टोरेज में डेटा बिल्कुल नहीं है या खाली '[]' है
 if (!students || students.length === 0) {
-    students = defaultStudents; 
+    students = defaultStudents; // जबरदस्ती मॉक डेटा डालें
     localStorage.setItem("students", JSON.stringify(students)); // मेमोरी में सेव करें
 }
 
 let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
-    
-if (!localStorage.getItem("students")) {
-    localStorage.setItem("students", JSON.stringify(students));
-}
 
 // =====================================================
-// SAVE DATA TO LOCAL STORAGE
+// 2. SAVE DATA TO LOCAL STORAGE
 // =====================================================
 function saveData() {
     localStorage.setItem("students", JSON.stringify(students));
@@ -31,7 +30,7 @@ function saveData() {
 }
 
 // =====================================================
-// CURRENT DATE LOGIC
+// 3. CURRENT DATE LOGIC
 // =====================================================
 function getToday() {
     const now = new Date();
@@ -43,16 +42,18 @@ function getToday() {
 
 function displayDate() {
     const date = new Date();
-    document.getElementById("currentDate").innerText =
-        date.toLocaleDateString("en-IN", {
+    const element = document.getElementById("currentDate");
+    if (element) {
+        element.innerText = date.toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "long",
             year: "numeric"
         });
+    }
 }
 
 // =====================================================
-// 6 PM LOCK LOGIC
+// 4. 6 PM LOCK LOGIC
 // =====================================================
 function isAttendanceLocked() {
     return new Date().getHours() >= 18;
@@ -60,19 +61,26 @@ function isAttendanceLocked() {
 
 function updateLockMessage() {
     const message = document.getElementById("lockMessage");
-    if (isAttendanceLocked()) {
-        message.innerText = "🔒 Attendance updating is closed after 6:00 PM.";
-    } else {
-        message.innerText = "Attendance can be updated until 6:00 PM.";
+    if (message) {
+        if (isAttendanceLocked()) {
+            message.innerText = "🔒 Attendance updating is closed after 6:00 PM.";
+        } else {
+            message.innerText = "Attendance can be updated until 6:00 PM.";
+        }
     }
 }
 
 // =====================================================
-// ADD NEW STUDENT
+// 5. ADD NEW STUDENT
 // =====================================================
 function addStudent() {
-    const name = document.getElementById("studentName").value.trim();
-    const roll = document.getElementById("rollNumber").value.trim();
+    const nameInput = document.getElementById("studentName");
+    const rollInput = document.getElementById("rollNumber");
+
+    if (!nameInput || !rollInput) return;
+
+    const name = nameInput.value.trim();
+    const roll = rollInput.value.trim();
 
     if (name === "" || roll === "") {
         alert("Please enter student name and roll number.");
@@ -80,7 +88,7 @@ function addStudent() {
     }
 
     const alreadyExists = students.some(function(student) {
-        return student.roll.toLowerCase() === roll.toLowerCase();
+        return student.roll && student.roll.toLowerCase() === roll.toLowerCase();
     });
 
     if (alreadyExists) {
@@ -96,8 +104,8 @@ function addStudent() {
 
     saveData();
 
-    document.getElementById("studentName").value = "";
-    document.getElementById("rollNumber").value = "";
+    nameInput.value = "";
+    rollInput.value = "";
 
     displayStudents();
     updateDashboard();
@@ -106,14 +114,15 @@ function addStudent() {
 }
 
 // =====================================================
-// SELECTED SUBJECT
+// 6. SELECTED SUBJECT
 // =====================================================
 function getSelectedSubject() {
-    return document.getElementById("subjectSelect").value;
+    const element = document.getElementById("subjectSelect");
+    return element ? element.value : "";
 }
 
 // =====================================================
-// MARK ATTENDANCE (PRESENT / ABSENT)
+// 7. MARK ATTENDANCE (PRESENT / ABSENT)
 // =====================================================
 function markAttendance(studentId, status) {
     if (isAttendanceLocked()) {
@@ -155,22 +164,24 @@ function markAttendance(studentId, status) {
 }
 
 // =====================================================
-// DISPLAY STUDENTS LIST
+// 8. DISPLAY STUDENTS LIST
 // =====================================================
 function displayStudents() {
     const list = document.getElementById("studentList");
-    const search = document.getElementById("searchStudent").value.toLowerCase().trim();
+    if (!list) return;
+
+    const searchInput = document.getElementById("searchStudent");
+    const search = searchInput ? searchInput.value.toLowerCase().trim() : "";
 
     const filtered = students.filter(function(student) {
-        return (
-            student.name.toLowerCase().includes(search) ||
-            student.roll.toLowerCase().includes(search)
-        );
+        const studentName = student.name ? student.name.toLowerCase() : "";
+        const studentRoll = student.roll ? student.roll.toLowerCase() : "";
+        return studentName.includes(search) || studentRoll.includes(search);
     });
 
     if (filtered.length === 0) {
         list.innerHTML = `
-            <div class="empty">
+            <div class="empty" style="text-align:center; padding: 20px; color: #7f8798;">
                 No students found.
             </div>
         `;
@@ -201,14 +212,17 @@ function displayStudents() {
         const row = document.createElement("div");
         row.className = "student-row";
 
+        // सुरक्षित रेंडरिंग के लिए roll डिफ़ॉल्ट सेट किया गया है
+        const displayRoll = student.roll ? student.roll : "N/A";
+
         row.innerHTML = `
-            <div class="student-top">
+            <div class="student-top" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <div class="student-info">
-                    <h3>👤 ${escapeHTML(student.name)}</h3>
-                    <p>Roll No: ${escapeHTML(student.roll)}</p>
-                    ${subject ? `<p>Subject: ${escapeHTML(subject)}</p>` : `<p>Select a subject first.</p>`}
+                    <h3 style="margin: 0; font-size: 16px;">👤 ${escapeHTML(student.name)}</h3>
+                    <p style="margin: 4px 0 0; font-size: 13px; color: #7f8798;">Roll No: ${escapeHTML(displayRoll)}</p>
+                    ${subject ? `<p style="margin: 4px 0 0; font-size: 12px; color: #8b5cf6;">Subject: ${escapeHTML(subject)}</p>` : `<p style="margin: 4px 0 0; font-size: 12px; color: #7f8798;">Select a subject first.</p>`}
                 </div>
-                <div class="attendance-buttons">
+                <div class="attendance-buttons" style="display: flex; gap: 8px;">
                     <button class="present-btn ${todayStatus === 'Present' ? 'active' : ''}"
                         onclick="markAttendance(${student.id}, 'Present')"
                         ${isAttendanceLocked() ? 'disabled' : ''}>
@@ -224,7 +238,7 @@ function displayStudents() {
                     </button>
                 </div>
             </div>
-            <div class="attendance-details">
+            <div class="attendance-details" style="padding: 10px 15px; background: rgba(0,0,0,0.01);">
                 ${getStudentAttendanceDetails(student.id)}
             </div>
         `;
@@ -233,7 +247,7 @@ function displayStudents() {
 }
 
 // =====================================================
-// GET STUDENT ATTENDANCE DETAILS (PERCENTAGE GRAPH)
+// 9. GET STUDENT ATTENDANCE DETAILS (75% Check)
 // =====================================================
 function getStudentAttendanceDetails(studentId) {
     const records = attendance.filter(function(record) {
@@ -241,7 +255,7 @@ function getStudentAttendanceDetails(studentId) {
     });
 
     if (records.length === 0) {
-        return `<p>📊 No attendance recorded yet.</p>`;
+        return `<p style="margin: 0; font-size: 12px; color: #7f8798;">📊 No attendance recorded yet.</p>`;
     }
 
     let total = records.length;
@@ -252,9 +266,9 @@ function getStudentAttendanceDetails(studentId) {
     const overall = Math.round((present / total) * 100);
 
     let html = `
-        <p>
+        <p style="margin: 0 0 8px; font-size: 13px;">
             <strong>Overall Attendance:</strong>
-            <span class="${overall < 75 ? 'warning' : 'good'}">${overall}%</span>
+            <span class="${overall < 75 ? 'warning' : 'good'}" style="font-weight: bold; color: ${overall < 75 ? '#ef4444' : '#10b981'};">${overall}%</span>
         </p>
     `;
 
@@ -275,9 +289,9 @@ function getStudentAttendanceDetails(studentId) {
         const percentage = Math.round((subjectPresent / subjectTotal) * 100);
 
         html += `
-            <div class="subject-line">
+            <div class="subject-line" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
                 <span>${escapeHTML(subject)}</span>
-                <span class="${percentage < 75 ? 'warning' : 'good'}">
+                <span style="color: ${percentage < 75 ? '#ef4444' : '#10b981'}; font-weight: bold;">
                     ${percentage}% ${percentage < 75 ? ' ⚠️' : ''}
                 </span>
             </div>
@@ -285,14 +299,14 @@ function getStudentAttendanceDetails(studentId) {
     }
 
     if (overall < 75) {
-        html += `<p class="warning">⚠️ Warning: Overall attendance is below 75%.</p>`;
+        html += `<p class="warning" style="margin: 4px 0 0; font-size: 12px; color: #ef4444;">⚠️ Warning: Overall attendance is below 75%.</p>`;
     }
 
     return html;
 }
 
 // =====================================================
-// DELETE STUDENT
+// 10. DELETE STUDENT
 // =====================================================
 function deleteStudent(studentId) {
     const student = students.find(function(item) {
@@ -317,17 +331,16 @@ function deleteStudent(studentId) {
     updateDashboard();
 }
 
-// ====================================================
-// DASHBOARD STATS REFRESH
+// =====================================================
+// 11. DASHBOARD STATS REFRESH
 // =====================================================
 function updateDashboard() {
-    if (document.getElementById("totalStudents")) {
-        document.getElementById("totalStudents").innerText = students.length;
-    }
-    
-    if (document.getElementById("totalClasses")) {
-        document.getElementById("totalClasses").innerText = attendance.length;
-    }
+    const totalStudentsEl = document.getElementById("totalStudents");
+    const totalClassesEl = document.getElementById("totalClasses");
+    const overallAttendanceEl = document.getElementById("overallAttendance");
+
+    if (totalStudentsEl) totalStudentsEl.innerText = students.length;
+    if (totalClassesEl) totalClassesEl.innerText = attendance.length;
 
     let totalPresent = 0;
     attendance.forEach(function(record) {
@@ -341,13 +354,11 @@ function updateDashboard() {
         percentage = Math.round((totalPresent / attendance.length) * 100);
     }
 
-    if (document.getElementById("overallAttendance")) {
-        document.getElementById("overallAttendance").innerText = percentage + "%";
-    }
+    if (overallAttendanceEl) overallAttendanceEl.innerText = percentage + "%";
 }
 
 // =====================================================
-// XSS PROTECTION (HTML ESCAPE)
+// 12. XSS PROTECTION (HTML ESCAPE)
 // =====================================================
 function escapeHTML(value) {
     return String(value)
@@ -359,10 +370,11 @@ function escapeHTML(value) {
 }
 
 // =====================================================
-// EVENT LISTENERS & INITIAL INITIALIZATION
+// 13. EVENT LISTENERS & INITIAL SETUP
 // =====================================================
-if (document.getElementById("subjectSelect")) {
-    document.getElementById("subjectSelect").addEventListener("change", function() {
+const subjectSelect = document.getElementById("subjectSelect");
+if (subjectSelect) {
+    subjectSelect.addEventListener("change", function() {
         displayStudents();
     });
 }
@@ -374,6 +386,11 @@ if (searchInput) {
     });
 }
 
+const addBtn = document.querySelector(".add-student-btn"); 
+if (addBtn) {
+    addBtn.addEventListener("click", addStudent);
+}
+
 displayDate();
 updateLockMessage();
 displayStudents();
@@ -383,3 +400,4 @@ setInterval(function() {
     updateLockMessage();
     displayStudents();
 }, 60000);
+                            
